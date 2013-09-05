@@ -8,12 +8,24 @@ function startup() {
         var node = document.getElementById(id);
         node.setAttribute("onclick","object_id_clicked = '" + id + "';");
     }
-    // initalize the state
-    function State() { }
-    State.prototype = {"initialize":initialize,"clicked":clicked,"draw":draw};
-    state = new State();
     // fetch the stage node
     stage = document.getElementById("__stage__");
+    // initalize the state
+    function State() { }
+    State.prototype = {
+        "initialize":initialize,
+        "clicked":clicked,
+        "draw":draw,
+        "load":function () {
+            var data = JSON.parse(localStorage.state);
+            for (name in data) this[name] = data[name];
+        },
+        "save":function () { localStorage.state = JSON.stringify(this); }
+    };
+    state = new State();
+    state.initialize();
+    state.load();
+    state.draw();
 }
 
 function delegateClick() {
@@ -24,13 +36,14 @@ function delegateClick() {
         delete object_id_clicked;
         state.clicked(object_id);
     }
+    document.cookie = "x=test";
 }
 
 function drawObjects(object_ids) {
     while(stage.lastChild !== null) stage.removeChild(stage.lastChild);
-    for(var i = 0; i < object_ids) {
-        var use_node = document.createElementNS(svg_namespace,"use");
-        node.setAttributeNS(xlink_namespace,"href","#"+this.id);
+    for(var i = 0; i < object_ids.length; ++i) {
+        var node = document.createElementNS(svg_namespace,"use");
+        node.setAttributeNS(xlink_namespace,"href","#"+object_ids[i]);
         stage.appendChild(node);
     }
 }
