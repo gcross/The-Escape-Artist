@@ -7,6 +7,9 @@ function startup() {
         var id = usable_object_ids[i];
         var node = document.getElementById(id);
         node.setAttribute("onclick","object_id_clicked = '" + id + "';");
+        old_style = node.getAttribute("style");
+        if (old_style === null) old_style = "";
+        node.setAttribute("style",old_style + ";cursor:pointer");
     }
     // fetch the stage node
     stage = document.getElementById("__stage__");
